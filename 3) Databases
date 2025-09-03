@@ -1,0 +1,14 @@
+postgres=# CREATE DATABASE university;
+CREATE DATABASE
+
+postgres=# DROP DATABASE university;
+DROP DATABASE
+
+postgres=# CREATE DATABASE university;
+CREATE DATABASE
+
+postgres=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+
+postgres=# \c university
+You are now connected to database "university" as user "postgres".

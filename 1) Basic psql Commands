@@ -1,0 +1,43 @@
+C:\Users\Silicon>psql -U postgres
+Password for user postgres:
+
+psql (17.6)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \l
+                                                                    List of databases
+   Name    |  Owner   | Encoding | Locale Provider |          Collate           |           Ctype            | Locale | ICU Rules |   Access privileges
+-----------+----------+----------+-----------------+----------------------------+----------------------------+--------+-----------+-----------------------
+ postgres  | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           |
+ template0 | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres          +
+           |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+ template1 | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres          +
+           |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+(3 rows)
+
+
+postgres=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+postgres=# CREATE TABLE students (
+postgres(#     id SERIAL PRIMARY KEY,
+postgres(#     name VARCHAR(100),
+postgres(#     age INT
+postgres(# );
+CREATE TABLE
+
+postgres=# INSERT INTO students (name, age) VALUES ('Alice', 21), ('Bob', 23);
+INSERT 0 2
+
+postgres=# SELECT * FROM students;
+ id | name  | age
+----+-------+-----
+  1 | Alice |  21
+  2 | Bob   |  23
+(2 rows)
+
+postgres=# DROP TABLE students;
+DROP TABLE
+postgres=# \q

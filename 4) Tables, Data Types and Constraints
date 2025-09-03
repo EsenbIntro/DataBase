@@ -1,0 +1,45 @@
+university=# CREATE TABLE students (
+university(#    student_id SERIAL PRIMARY KEY,
+university(#    first_name VARCHAR(50) NOT NULL,
+university(#    last_name VARCHAR(50) NOT NULL,
+university(#    email VARCHAR(100) UNIQUE NOT NULL,
+university(#    faculty VARCHAR(100)
+university(# );
+CREATE TABLE
+
+university=# CREATE TABLE dummy_table (
+university(#    id SERIAL PRIMARY KEY
+university(# );
+CREATE TABLE
+
+university=# DROP TABLE IF EXISTS dummy_table;
+DROP TABLE
+
+university=# ALTER TABLE students
+university-# ADD COLUMN date_of_birth DATE;
+ALTER TABLE
+
+university=# ALTER TABLE students
+university-# DROP COLUMN faculty;
+ALTER TABLE
+
+university=# ALTER TABLE students
+university-# ALTER COLUMN first_name TYPE TEXT;
+ALTER TABLE
+
+university=# ALTER TABLE students
+university-# ADD CONSTRAINT unique_student_email UNIQUE (email);
+ALTER TABLE
+
+university=# ALTER TABLE students
+university-# RENAME COLUMN email TO email_address;
+ALTER TABLE
+
+university=# ALTER TABLE students
+university-# RENAME TO university_students;
+ALTER TABLE
+
+university=# CREATE TEMP TABLE temp_table (
+university(#    id SERIAL PRIMARY KEY
+university(# );
+CREATE TABLE
