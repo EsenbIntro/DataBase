@@ -6,6 +6,10 @@
 - Lab 4 - Tables, Data Types and Constraints
 - Lab 5 - Primary Keys
 - Lab 6 - Foreign Keys and Relationships
+- Lab 7 - Database Design Basics
+- Lab 8 - Viewing Database and Table Structure
+- Lab 9 - Basic Data Operations
+- Lab 10 - Querying Data (unfinished)
 
 This repository contains laboratory work for AUCA Database course. It consists of direct input/output from the terminal copypasted into .txt files.
 
