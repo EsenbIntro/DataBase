@@ -1,0 +1,113 @@
+university_design=# CREATE TABLE students (
+university_design(#     student_id SERIAL PRIMARY KEY,
+university_design(#     first_name VARCHAR(100) NOT NULL,
+university_design(#     last_name VARCHAR(100) NOT NULL,
+university_design(#     email VARCHAR(100) UNIQUE,
+university_design(#     date_of_birth DATE NOT NULL,
+university_design(#     faculty VARCHAR(50)
+university_design(# );
+CREATE TABLE
+
+university_design=# CREATE TABLE professors (
+university_design(#     professor_id SERIAL PRIMARY KEY,
+university_design(#     first_name VARCHAR(100) NOT NULL,
+university_design(#     last_name VARCHAR(100) NOT NULL,
+university_design(#     department VARCHAR(50) NOT NULL,
+university_design(#     email VARCHAR(100) UNIQUE NOT NULL
+university_design(# );
+CREATE TABLE
+
+university_design=# CREATE TABLE courses (
+university_design(#     course_id SERIAL PRIMARY KEY,
+university_design(#     course_name VARCHAR(100) UNIQUE NOT NULL,
+university_design(#     credits INT NOT NULL,
+university_design(#     description TEXT,
+university_design(#     professor_id INTEGER NOT NULL,
+university_design(#     FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE
+university_design(# );
+CREATE TABLE
+
+university_design=# CREATE TABLE student_enrollments (
+university_design(#     enrollment_id SERIAL PRIMARY KEY,
+university_design(#     student_id INTEGER NOT NULL,
+university_design(#     course_id INTEGER NOT NULL,
+university_design(#     FOREIGN KEY (student_id) REFERENCES students(student_id),
+university_design(#     FOREIGN KEY (course_id) REFERENCES courses(course_id),
+university_design(#     UNIQUE(student_id, course_id)
+university_design(# );
+CREATE TABLE
+
+university_design=# \dt
+                List of relations
+ Schema |        Name         | Type  |  Owner
+--------+---------------------+-------+----------
+ public | courses             | table | postgres
+ public | professors          | table | postgres
+ public | student_enrollments | table | postgres
+ public | students            | table | postgres
+(4 rows)
+
+university_design=# CREATE DATABASE library;
+CREATE DATABASE
+university_design=# \c library
+You are now connected to database "library" as user "postgres".
+
+library=# CREATE TABLE authors (
+library(#       author_id SERIAL PRIMARY KEY,
+library(#       first_name VARCHAR(50) NOT NULL,
+library(#       last_name VARCHAR(50) NOT NULL,
+library(#       birth_date DATE
+library(# );
+CREATE TABLE
+
+library=# CREATE TABLE books (
+library(#       book_id SERIAL PRIMARY KEY,
+library(#       title VARCHAR(200) NOT NULL,
+library(#       isbn VARCHAR(13) UNIQUE,
+library(#       publication_year INTEGER,
+library(#       available_copies INTEGER DEFAULT 1
+library(# );
+CREATE TABLE
+
+library=# CREATE TABLE book_authors (
+library(#       book_id INTEGER,
+library(#       author_id INTEGER,
+library(#       PRIMARY KEY (book_id, author_id),
+library(#       FOREIGN KEY (book_id) REFERENCES books(book_id),
+library(#       FOREIGN KEY (author_id) REFERENCES authors(author_id)
+library(# );
+CREATE TABLE
+
+library=# CREATE TABLE members (
+library(#       member_id SERIAL PRIMARY KEY,
+library(#       first_name VARCHAR(50) NOT NULL,
+library(#       last_name VARCHAR(50) NOT NULL,
+library(#       email VARCHAR(100) UNIQUE NOT NULL,
+library(#       phone VARCHAR(15),
+library(#       membership_date DATE DEFAULT CURRENT_DATE
+library(# );
+CREATE TABLE
+
+library=# CREATE TABLE loans (
+library(#       loan_id SERIAL PRIMARY KEY,
+library(#       member_id INTEGER NOT NULL,
+library(#       book_id INTEGER NOT NULL,
+library(#       loan_date DATE DEFAULT CURRENT_DATE,
+library(#       due_date DATE NOT NULL,
+library(#       return_date DATE,
+library(#       late_fee DECIMAL(10,2) DEFAULT 0.00,
+library(#       FOREIGN KEY (member_id) REFERENCES members(member_id),
+library(#       FOREIGN KEY (book_id) REFERENCES books(book_id)
+library(# );
+CREATE TABLE
+
+library=# \dt
+            List of relations
+ Schema |     Name     | Type  |  Owner
+--------+--------------+-------+----------
+ public | authors      | table | postgres
+ public | book_authors | table | postgres
+ public | books        | table | postgres
+ public | loans        | table | postgres
+ public | members      | table | postgres
+(5 rows)

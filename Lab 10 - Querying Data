@@ -1,0 +1,9 @@
+basic_operations=# CREATE DATABASE querying_data;
+CREATE DATABASE
+
+basic_operations=# \c querying_data
+You are now connected to database "querying_data" as user "postgres".
+querying_data=#
+
+
+

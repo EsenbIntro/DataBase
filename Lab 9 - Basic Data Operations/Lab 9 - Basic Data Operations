@@ -1,0 +1,83 @@
+library=# CREATE DATABASE basic_operations;
+CREATE DATABASE
+library=# \c basic_operations
+You are now connected to database "basic_operations" as user "postgres".
+basic_operations=#
+
+basic_operations=# CREATE TABLE Students (
+basic_operations(#      student_id SERIAL PRIMARY KEY,
+basic_operations(#      first_name VARCHAR(50),
+basic_operations(#      last_name VARCHAR(50),
+basic_operations(#      birth_date DATE
+basic_operations(# );
+CREATE TABLE
+
+basic_operations=# INSERT INTO Students (first_name, last_name, birth_date)
+basic_operations-# VALUES ('Aibek', 'Sharshenov', '2002-05-12');
+INSERT 0 1
+
+basic_operations=# INSERT INTO Students (first_name, last_name, birth_date) VALUES
+basic_operations-# ('Ainura', 'Toktomamatova', '2001-09-23'),
+basic_operations-# ('Bakyt', 'Mamatov', '2003-01-15'),
+basic_operations-# ('Gulzat', 'Sultanova', '2002-07-30');
+INSERT 0 3
+
+basic_operations=# SELECT * FROM Students;
+ student_id | first_name |   last_name   | birth_date
+------------+------------+---------------+------------
+          1 | Aibek      | Sharshenov    | 2002-05-12
+          2 | Ainura     | Toktomamatova | 2001-09-23
+          3 | Bakyt      | Mamatov       | 2003-01-15
+          4 | Gulzat     | Sultanova     | 2002-07-30
+(4 rows)
+
+basic_operations=# UPDATE Students
+basic_operations-# SET birth_date = '2002-05-15'
+basic_operations-# WHERE first_name = 'Aibek' AND last_name = 'Sharshenov';
+UPDATE 1
+
+basic_operations=# DELETE FROM Students
+basic_operations-# WHERE first_name = 'Gulzat' AND last_name = 'Sultanova';
+DELETE 1
+
+basic_operations=# DELETE FROM Students
+basic_operations-# WHERE birth_date < '2002-01-01';
+DELETE 1
+
+basic_operations=# SELECT * FROM Students;
+ student_id | first_name | last_name  | birth_date
+------------+------------+------------+------------
+          1 | Aibek      | Sharshenov | 2002-05-15
+          3 | Bakyt      | Mamatov    | 2003-01-15
+(2 rows)
+
+basic_operations=# COPY Students(first_name, last_name, birth_date)
+basic_operations-# FROM 'C:\Users\Silicon\Desktop\Databases\Lab 9 - Basic Data Operations\students.csv'
+basic_operations-# DELIMITER ','
+basic_operations-# CSV HEADER;
+COPY 3
+
+basic_operations=# SELECT * FROM Students;
+ student_id | first_name | last_name  | birth_date
+------------+------------+------------+------------
+          3 | Bakyt      | Mamatov    | 2003-01-15
+          1 | Aibek      | Sharshenov | 2002-05-15
+          5 | Nursultan  | Isakov     | 2002-04-10
+          6 | Meerim     | Bekova     | 2003-06-12
+          7 | Tilek      | Usubaliev  | 2001-11-05
+(5 rows)
+
+basic_operations=# UPDATE Students
+basic_operations-# SET last_name = 'Bekov'
+basic_operations-# WHERE last_name IN ('Mamatov', 'Isakov', 'Usubaliev');
+UPDATE 3
+
+basic_operations=# SELECT * FROM Students;
+ student_id | first_name | last_name  | birth_date
+------------+------------+------------+------------
+          1 | Aibek      | Sharshenov | 2002-05-15
+          6 | Meerim     | Bekova     | 2003-06-12
+          3 | Bakyt      | Bekov      | 2003-01-15
+          5 | Nursultan  | Bekov      | 2002-04-10
+          7 | Tilek      | Bekov      | 2001-11-05
+(5 rows)
