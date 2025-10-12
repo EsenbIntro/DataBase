@@ -1,0 +1,183 @@
+library=# CREATE DATABASE ecommerce_joins;
+CREATE DATABASE
+library=# \c ecommerce_joins
+You are now connected to database "ecommerce_joins" as user "postgres".
+ecommerce_joins=#
+
+ecommerce_joins=# CREATE TABLE customers (
+ecommerce_joins(#     customer_id SERIAL PRIMARY KEY,
+ecommerce_joins(#     name VARCHAR(100),
+ecommerce_joins(#     email VARCHAR(100)
+ecommerce_joins(# );
+CREATE TABLE
+
+ecommerce_joins=# CREATE TABLE products (
+ecommerce_joins(#     product_id SERIAL PRIMARY KEY,
+ecommerce_joins(#     product_name VARCHAR(100),
+ecommerce_joins(#     price DECIMAL(10, 2)
+ecommerce_joins(# );
+CREATE TABLE
+
+ecommerce_joins=# CREATE TABLE orders (
+ecommerce_joins(#     order_id SERIAL PRIMARY KEY,
+ecommerce_joins(#     customer_id INT,
+ecommerce_joins(#     order_date DATE
+ecommerce_joins(# );
+CREATE TABLE
+
+ecommerce_joins=# CREATE TABLE order_items (
+ecommerce_joins(#     order_item_id SERIAL PRIMARY KEY,
+ecommerce_joins(#     order_id INT,
+ecommerce_joins(#     product_id INT,
+ecommerce_joins(#     quantity INT
+ecommerce_joins(# );
+CREATE TABLE
+
+ecommerce_joins=# INSERT INTO customers (name, email) VALUES
+ecommerce_joins-# ('Alice Smith', 'alice.s@email.com'),
+ecommerce_joins-# ('Bob Johnson', 'bob.j@email.com'),
+ecommerce_joins-# ('Charlie Brown', 'charlie.b@email.com'),
+ecommerce_joins-# ('Diana Prince', 'diana.p@email.com');
+INSERT 0 4
+
+ecommerce_joins=# INSERT INTO products (product_name, price) VALUES
+ecommerce_joins-# ('Laptop', 1200.00),
+ecommerce_joins-# ('Mouse', 25.00),
+ecommerce_joins-# ('Keyboard', 75.00),
+ecommerce_joins-# ('Monitor', 300.00);
+INSERT 0 4
+
+ecommerce_joins=# INSERT INTO orders (customer_id, order_date) VALUES
+ecommerce_joins-# (1, '2024-10-15'),
+ecommerce_joins-# (2, '2024-10-16'),
+ecommerce_joins-# (1, '2024-10-17'),
+ecommerce_joins-# (3, '2024-10-18'),
+ecommerce_joins-# (99, '2024-10-19');
+INSERT 0 5
+
+ecommerce_joins=# INSERT INTO order_items (order_id, product_id, quantity) VALUES
+ecommerce_joins-# (1, 1, 1), (1, 2, 1),
+ecommerce_joins-# (2, 4, 2),
+ecommerce_joins-# (3, 3, 1),
+ecommerce_joins-# (4, 2, 1), (4, 3, 1);
+INSERT 0 6
+
+ecommerce_joins=# SELECT c.name, c.email, o.order_date
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# INNER JOIN orders o ON c.customer_id = o.customer_id;
+    name     |       email       | order_date
+-------------+-------------------+------------
+ Alice Smith | alice.s@email.com | 2024-10-15
+ Bob Johnson | bob.j@email.com   | 2024-10-16
+ Alice Smith | alice.s@email.com | 2024-10-17
+ Charlie Brown | charlie.b@email.com | 2024-10-18
+(4 rows)
+
+ecommerce_joins=# SELECT c.name, c.email, o.order_date
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# LEFT JOIN orders o ON c.customer_id = o.customer_id;
+     name      |       email       | order_date
+---------------+-------------------+------------
+ Alice Smith   | alice.s@email.com | 2024-10-15
+ Bob Johnson   | bob.j@email.com   | 2024-10-16
+ Alice Smith   | alice.s@email.com | 2024-10-17
+ Charlie Brown | charlie.b@email.com | 2024-10-18
+ Diana Prince  | diana.p@email.com |
+(5 rows)
+
+ecommerce_joins=# SELECT c.name, c.email, o.order_id, o.order_date
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# RIGHT JOIN orders o ON c.customer_id = o.customer_id;
+    name     |       email       | order_id | order_date
+-------------+-------------------+----------+------------
+ Alice Smith | alice.s@email.com |        1 | 2024-10-15
+ Bob Johnson | bob.j@email.com   |        2 | 2024-10-16
+ Alice Smith | alice.s@email.com |        3 | 2024-10-17
+ Charlie Brown | charlie.b@email.com |        4 | 2024-10-18
+             |                   |        5 | 2024-10-19
+(5 rows)
+
+ecommerce_joins=# SELECT c.name, o.order_id, o.order_date
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;
+     name      | order_id | order_date
+---------------+----------+------------
+ Alice Smith   |        1 | 2024-10-15
+ Bob Johnson   |        2 | 2024-10-16
+ Alice Smith   |        3 | 2024-10-17
+ Charlie Brown |        4 | 2024-10-18
+ Diana Prince  |          |
+               |        5 | 2024-10-19
+(6 rows)
+
+ecommerce_joins=# SELECT c.name, p.product_name
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# CROSS JOIN products p;
+      name       | product_name
+-----------------+--------------
+ Alice Smith     | Laptop
+ Alice Smith     | Mouse
+ Alice Smith     | Keyboard
+ Alice Smith     | Monitor
+ Bob Johnson     | Laptop
+ Bob Johnson     | Mouse
+ Bob Johnson     | Keyboard
+ Bob Johnson     | Monitor
+ Charlie Brown   | Laptop
+ Charlie Brown   | Mouse
+ Charlie Brown   | Keyboard
+ Charlie Brown   | Monitor
+ Diana Prince    | Laptop
+ Diana Prince    | Mouse
+ Diana Prince    | Keyboard
+ Diana Prince    | Monitor
+(16 rows)
+
+ecommerce_joins=# SELECT c.name, o.order_date, p.product_name, oi.quantity
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# INNER JOIN orders o ON c.customer_id = o.customer_id
+ecommerce_joins-# INNER JOIN order_items oi ON o.order_id = oi.order_id
+ecommerce_joins-# INNER JOIN products p ON oi.product_id = p.product_id;
+    name     | order_date | product_name | quantity
+-------------+------------+--------------+----------
+ Alice Smith | 2024-10-15 | Laptop       |        1
+ Alice Smith | 2024-10-15 | Mouse        |        1
+ Bob Johnson | 2024-10-16 | Monitor      |        2
+ Alice Smith | 2024-10-17 | Keyboard     |        1
+ Charlie Brown | 2024-10-18 | Mouse        |        1
+ Charlie Brown | 2024-10-18 | Keyboard     |        1
+(6 rows)
+
+ecommerce_joins=# CREATE TABLE employees_management (
+ecommerce_joins(#     employee_id INT PRIMARY KEY,
+ecommerce_joins(#     name VARCHAR(50),
+ecommerce_joins(#     manager_id INT
+ecommerce_joins(# );
+CREATE TABLE
+
+ecommerce_joins=# INSERT INTO employees_management VALUES
+ecommerce_joins-# (1, 'CEO Carl', NULL),
+ecommerce_joins-# (2, 'Manager Mary', 1),
+ecommerce_joins-# (3, 'Sam Sales', 2),
+ecommerce_joins-# (4, 'Ed Engineer', 2);
+INSERT 0 4
+
+ecommerce_joins=# SELECT e1.name AS employee, e2.name AS manager
+ecommerce_joins-# FROM employees_management e1
+ecommerce_joins-# LEFT JOIN employees_management e2 ON e1.manager_id = e2.employee_id;
+   employee   |  manager
+--------------+--------------
+ CEO Carl     |
+ Manager Mary | CEO Carl
+ Sam Sales    | Manager Mary
+ Ed Engineer  | Manager Mary
+(4 rows)
+
+ecommerce_joins=# SELECT c.name
+ecommerce_joins-# FROM customers c
+ecommerce_joins-# LEFT JOIN orders o ON c.customer_id = o.customer_id
+ecommerce_joins-# WHERE o.order_id IS NULL;
+     name
+--------------
+ Diana Prince
+(1 row)

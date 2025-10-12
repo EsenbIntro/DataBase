@@ -1,0 +1,206 @@
+company_queries=# ALTER TABLE employees
+company_queries-# ADD COLUMN hire_date DATE,
+company_queries-# ADD COLUMN age INT;
+ALTER TABLE
+
+company_queries=# UPDATE employees SET hire_date = '2022-03-15', age = 34 WHERE first_name = 'Anna';
+UPDATE 1
+company_queries=# UPDATE employees SET hire_date = '2021-07-22', age = 28 WHERE first_name = 'Brad';
+UPDATE 1
+company_queries=# UPDATE employees SET hire_date = '2020-01-10', age = 45 WHERE first_name = 'Charles';
+UPDATE 1
+company_queries=# UPDATE employees SET hire_date = '2023-09-01', age = 25 WHERE first_name = 'Diana';
+UPDATE 1
+company_queries=# UPDATE employees SET hire_date = '2021-11-05', age = 39 WHERE first_name = 'Ethan';
+UPDATE 1
+company_queries=# UPDATE employees SET hire_date = '2023-02-20', age = 31 WHERE first_name = 'Fiona';
+UPDATE 1
+
+company_queries=# INSERT INTO employees (first_name, last_name, email, department, salary, hire_date, age)
+company_queries-# VALUES ('George', 'Miller', NULL, 'Engineering', 92000, '2023-05-12', 29);
+INSERT 0 1
+
+company_queries=# SELECT COUNT(*) AS total_employees FROM employees;
+ total_employees
+-----------------
+               7
+(1 row)
+
+company_queries=# SELECT COUNT(email) AS employees_with_email FROM employees;
+ employees_with_email
+----------------------
+                    6
+(1 row)
+
+company_queries=# SELECT COUNT(DISTINCT department) AS unique_departments FROM employees;
+ unique_departments
+--------------------
+                  3
+(1 row)
+
+company_queries=# SELECT SUM(salary) AS total_salaries FROM employees;
+ total_salaries
+----------------
+         576000
+(1 row)
+
+company_queries=# SELECT department, SUM(salary) AS total_department_salaries
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  | total_department_salaries
+-------------+---------------------------
+ Sales       |                    166000
+ Marketing   |                    123000
+ Engineering |                    287000
+(3 rows)
+
+company_queries=# SELECT AVG(salary) AS average_salary FROM employees;
+     average_salary
+--------------------
+ 82285.714285714286
+(1 row)
+
+company_queries=# SELECT department, AVG(age) AS average_age FROM employees GROUP BY department;
+ department  |     average_age
+-------------+--------------------
+ Sales       | 33.5000000000000000
+ Marketing   | 28.0000000000000000
+ Engineering | 36.0000000000000000
+(3 rows)
+
+company_queries=# SELECT
+company_queries-#  MAX(salary) AS highest_salary,
+company_queries-#  MIN(salary) AS lowest_salary
+company_queries-# FROM employees;
+ highest_salary | lowest_salary
+----------------+---------------
+         110000 |         58000
+(1 row)
+
+company_queries=# SELECT department, MAX(hire_date) AS latest_hire_date
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  | latest_hire_date
+-------------+------------------
+ Sales       | 2021-11-05
+ Marketing   | 2023-09-01
+ Engineering | 2023-05-12
+(3 rows)
+
+company_queries=# SELECT department, STRING_AGG(first_name, ', ') AS employee_names
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  |    employee_names
+-------------+-----------------------
+ Sales       | Brad, Ethan
+ Marketing   | Diana, Fiona
+ Engineering | Anna, Charles, George
+(3 rows)
+
+company_queries=# SELECT department, ARRAY_AGG(salary) AS salary_array
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  |     salary_array
+-------------+-----------------------
+ Sales       | {72000,94000}
+ Marketing   | {65000,58000}
+ Engineering | {85000,110000,92000}
+(3 rows)
+
+company_queries=# SELECT
+company_queries-#  CASE
+company_queries-#  WHEN age < 30 THEN 'Under 30'
+company_queries-#  WHEN age BETWEEN 30 AND 40 THEN '30-40'
+company_queries-#  ELSE 'Over 40'
+company_queries-#  END AS age_group,
+company_queries-#  COUNT(*) AS employee_count,
+company_queries-#  AVG(salary) AS avg_salary
+company_queries-# FROM employees
+company_queries-# GROUP BY age_group;
+ age_group | employee_count |      avg_salary
+-----------+----------------+--------------------
+ 30-40     |              3 | 86666.666666666667
+ Over 40   |              1 | 110000.000000000000
+ Under 30  |              3 | 76333.333333333333
+(3 rows)
+
+company_queries=# SELECT department, AVG(salary) AS average_salary
+company_queries-# FROM employees
+company_queries-# GROUP BY department
+company_queries-# HAVING AVG(salary) > 85000;
+ department  |     average_salary
+-------------+--------------------
+ Engineering | 95666.666666666667
+(1 row)
+
+company_queries=# SELECT department, AVG(salary) AS dept_avg_salary
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  |   dept_avg_salary
+-------------+--------------------
+ Sales       | 83000.000000000000
+ Marketing   | 61500.000000000000
+ Engineering | 95666.666666666667
+(3 rows)
+
+company_queries=# SELECT
+company_queries-#     first_name,
+company_queries-#     department,
+company_queries-#     salary,
+company_queries-#     AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary
+company_queries-# FROM employees;
+ first_name | department  | salary |   dept_avg_salary
+------------+-------------+--------+--------------------
+ Anna       | Engineering |  85000 | 95666.666666666667
+ Charles    | Engineering | 110000 | 95666.666666666667
+ George     | Engineering |  92000 | 95666.666666666667
+ Diana      | Marketing   |  65000 | 61500.000000000000
+ Fiona      | Marketing   |  58000 | 61500.000000000000
+ Brad       | Sales       |  72000 | 83000.000000000000
+ Ethan      | Sales       |  94000 | 83000.000000000000
+(7 rows)
+
+company_queries=# SELECT
+company_queries-#  department,
+company_queries-#  COUNT(*) AS employee_count,
+company_queries-#  MIN(salary) AS min_salary,
+company_queries-#  MAX(salary) AS max_salary,
+company_queries-#  AVG(salary) AS avg_salary
+company_queries-# FROM employees
+company_queries-# GROUP BY department
+company_queries-# ORDER BY avg_salary DESC;
+ department  | employee_count | min_salary | max_salary |      avg_salary
+-------------+----------------+------------+------------+--------------------
+ Engineering |              3 |      85000 |     110000 | 95666.666666666667
+ Sales       |              2 |      72000 |      94000 | 83000.000000000000
+ Marketing   |              2 |      58000 |      65000 | 61500.000000000000
+(3 rows)
+
+
+company_queries=# SELECT
+company_queries-#  department,
+company_queries-#  COUNT(*) AS total_employees,
+company_queries-#  COUNT(CASE WHEN salary > 90000 THEN 1 END) AS high_earners,
+company_queries-#  COUNT(CASE WHEN hire_date >= '2023-01-01' THEN 1 END) AS recent_hires
+company_queries-# FROM employees
+company_queries-# GROUP BY department;
+ department  | total_employees | high_earners | recent_hires
+-------------+-----------------+--------------+--------------
+ Sales       |               2 |            1 |            0
+ Marketing   |               2 |            0 |            2
+ Engineering |               3 |            2 |            1
+(3 rows)
+
+company_queries=# SELECT
+company_queries-#  department,
+company_queries-#  COUNT(*) AS dept_count,
+company_queries-#  COUNT(*)::FLOAT / (SELECT COUNT(*) FROM employees) * 100 AS percentage
+company_queries-# FROM employees
+company_queries-# GROUP BY department
+company_queries-# ORDER BY percentage DESC;
+ department  | dept_count |    percentage
+-------------+------------+------------------
+ Engineering |          3 | 42.857142857142854
+ Sales       |          2 | 28.57142857142857
+ Marketing   |          2 | 28.57142857142857
+(3 rows)

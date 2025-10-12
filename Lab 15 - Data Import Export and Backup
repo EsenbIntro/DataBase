@@ -1,0 +1,125 @@
+library=# CREATE DATABASE data_migration;
+CREATE DATABASE
+library=# \c data_migration
+You are now connected to database "data_migration" as user "postgres".
+
+data_migration=# CREATE TABLE employees (
+data_migration(#     employee_id SERIAL PRIMARY KEY,
+data_migration(#     first_name VARCHAR(50),
+data_migration(#     last_name VARCHAR(50),
+data_migration(#     email VARCHAR(100),
+data_migration(#     department VARCHAR(50)
+data_migration(# );
+CREATE TABLE
+
+data_migration=# CREATE TABLE products (
+data_migration(#     product_id SERIAL PRIMARY KEY,
+data_migration(#     product_name VARCHAR(100),
+data_migration(#     price DECIMAL(10, 2),
+data_migration(#     description TEXT
+data_migration(# );
+CREATE TABLE
+
+data_migration=# CREATE TABLE departments (
+data_migration(#     department_id SERIAL PRIMARY KEY,
+data_migration(#     department_name VARCHAR(50)
+data_migration(# );
+CREATE TABLE
+
+data_migration=# INSERT INTO employees (first_name, last_name, email, department) VALUES
+data_migration-# ('John', 'Doe', 'john.d@example.com', 'Engineering'),
+data_migration-# ('Jane', 'Smith', 'jane.s@example.com', 'Marketing'),
+data_migration-# ('Peter', 'Jones', 'peter.j@example.com', 'Engineering');
+INSERT 0 3
+
+data_migration=# INSERT INTO products (product_name, price, description) VALUES
+data_migration-# ('Laptop', 1250.00, 'A powerful laptop'),
+data_migration-# ('Mouse', 35.50, 'An ergonomic mouse'),
+data_migration-# ('Webcam', 80.00, NULL);
+INSERT 0 3
+
+data_migration=# INSERT INTO departments (department_name) VALUES ('Engineering'), ('Marketing'), ('Sales');
+INSERT 0 3
+
+data_migration=# COPY employees TO 'C:\Users\Silicon\Desktop\employees_export.csv' WITH CSV HEADER;
+COPY 3
+
+data_migration=# COPY products(product_name, price, description) TO 'C:\Users\Silicon\Desktop\products_export.txt' WITH DELIMITER '|' NULL 'N/A' CSV HEADER;
+COPY 3
+
+data_migration=# COPY (SELECT * FROM employees WHERE department = 'Engineering') TO 'C:\Users\Silicon\Desktop\engineering_employees.csv' WITH CSV HEADER;
+COPY 2
+
+data_migration=# CREATE TABLE new_employees (
+data_migration(#     employee_id INT,
+data_migration(#     first_name VARCHAR(50),
+data_migration(#     last_name VARCHAR(50),
+data_migration(#     email VARCHAR(100),
+data_migration(#     department VARCHAR(50)
+data_migration(# );
+CREATE TABLE
+
+data_migration=# CREATE TABLE imported_products (
+data_migration(#     product_name VARCHAR(100),
+data_migration(#     price DECIMAL(10, 2),
+data_migration(#     description TEXT
+data_migration(# );
+CREATE TABLE
+
+data_migration=# COPY new_employees FROM 'C:\Users\Silicon\Desktop\employees_export.csv' WITH CSV HEADER;
+COPY 3
+
+data_migration=# COPY imported_products FROM 'C:\Users\Silicon\Desktop\products_export.txt' WITH DELIMITER '|' NULL 'N/A' CSV HEADER;
+COPY 3
+
+data_migration=# SELECT * FROM new_employees;
+ employee_id | first_name | last_name |       email        | department
+-------------+------------+-----------+--------------------+-------------
+           1 | John       | Doe       | john.d@example.com | Engineering
+           2 | Jane       | Smith     | jane.s@example.com | Marketing
+           3 | Peter      | Jones     | peter.j@example.com| Engineering
+(3 rows)
+
+data_migration=# SELECT * FROM imported_products;
+ product_name |  price  |    description
+--------------+---------+---------------------
+ Laptop       | 1250.00 | A powerful laptop
+ Mouse        |   35.50 | An ergonomic mouse
+ Webcam       |   80.00 | N/A
+(3 rows)
+
+C:\Users\Silicon> pg_dump -h localhost -U postgres -d data_migration -Fc > C:\Users\Silicon\Desktop\data_migration_backup.dump
+Password:
+
+C:\Users\Silicon> pg_dump -h localhost -U postgres -d data_migration -s > C:\Users\Silicon\Desktop\data_migration_schema.sql
+Password:
+
+C:\Users\Silicon> pg_dump -h localhost -U postgres -d data_migration -a -t employees -t departments > C:\Users\Silicon\Desktop\employee_dept_data.sql
+Password:
+
+C:\Users\Silicon> createdb -h localhost -U postgres restored_db
+Password:
+
+C:\Users\Silicon> pg_restore -h localhost -U postgres -d restored_db C:\Users\Silicon\Desktop\data_migration_backup.dump
+Password:
+
+C:\Users\Silicon> pg_restore --list C:\Users\Silicon\Desktop\data_migration_backup.dump
+;
+; Archive created at 2025-10-12 17:43:00 UTC
+;     dbname: data_migration
+;     TOC Entries: 21
+;     Compression: -1
+;     Dump Version: 1.15
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 14.5
+;     Dumped by pg_dump version: 14.5
+;
+;
+; Selected TOC Entries:
+;
+210; 1259 16386 TABLE public employees postgres
+211; 1259 16389 SEQUENCE public employees_employee_id_seq postgres
+212; 1259 16391 TABLE public products postgres
+...

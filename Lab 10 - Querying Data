@@ -1,9 +1,206 @@
-basic_operations=# CREATE DATABASE querying_data;
+library=# CREATE DATABASE company_queries;
 CREATE DATABASE
+library=# \c company_queries
+You are now connected to database "company_queries" as user "postgres".
+company_queries=#
 
-basic_operations=# \c querying_data
-You are now connected to database "querying_data" as user "postgres".
-querying_data=#
+company_queries=# CREATE TABLE employees (
+company_queries(#     employee_id SERIAL PRIMARY KEY,
+company_queries(#     first_name VARCHAR(50),
+company_queries(#     last_name VARCHAR(50),
+company_queries(#     email VARCHAR(100),
+company_queries(#     department VARCHAR(50),
+company_queries(#     salary INT
+company_queries(# );
+CREATE TABLE
 
+company_queries=# INSERT INTO employees (first_name, last_name, email, department, salary) VALUES
+company_queries-# ('Anna', 'Williams', 'anna.w@test.com', 'Engineering', 85000),
+company_queries-# ('Brad', 'Johnson', 'brad.j@test.com', 'Sales', 72000),
+company_queries-# ('Charles', 'Smith', 'charles.s@test.com', 'Engineering', 110000),
+company_queries-# ('Diana', 'Brown', 'diana.b@test.com', 'Marketing', 65000),
+company_queries-# ('Ethan', 'Jones', 'ethan.j@another.org', 'Sales', 94000),
+company_queries-# ('Fiona', 'Garcia', 'fiona.g@test.com', 'Marketing', 58000);
+INSERT 0 6
 
+company_queries=# SELECT * FROM employees;
+ employee_id | first_name | last_name |         email         | department  | salary
+-------------+------------+-----------+-----------------------+-------------+--------
+           1 | Anna       | Williams  | anna.w@test.com       | Engineering |  85000
+           2 | Brad       | Johnson   | brad.j@test.com       | Sales       |  72000
+           3 | Charles    | Smith     | charles.s@test.com    | Engineering | 110000
+           4 | Diana      | Brown     | diana.b@test.com      | Marketing   |  65000
+           5 | Ethan      | Jones     | ethan.j@another.org   | Sales       |  94000
+           6 | Fiona      | Garcia    | fiona.g@test.com      | Marketing   |  58000
+(6 rows)
 
+company_queries=# SELECT first_name, department FROM employees;
+ first_name | department
+------------+-------------
+ Anna       | Engineering
+ Brad       | Sales
+ Charles    | Engineering
+ Diana      | Marketing
+ Ethan      | Sales
+ Fiona      | Marketing
+(6 rows)
+
+company_queries=# SELECT first_name, salary, salary * 0.15 AS potential_bonus
+company_queries-# FROM employees;
+ first_name | salary | potential_bonus
+------------+--------+-----------------
+ Anna       |  85000 |        12750.00
+ Brad       |  72000 |        10800.00
+ Charles    | 110000 |        16500.00
+ Diana      |  65000 |         9750.00
+ Ethan      |  94000 |        14100.00
+ Fiona      |  58000 |         8700.00
+(6 rows)
+
+company_queries=# SELECT first_name, salary
+company_queries-# FROM employees
+company_queries-# WHERE department = 'Sales';
+ first_name | salary
+------------+--------
+ Brad       |  72000
+ Ethan      |  94000
+(2 rows)
+
+company_queries=# SELECT first_name, salary
+company_queries-# FROM employees
+company_queries-# WHERE salary > 80000 AND department = 'Engineering';
+ first_name | salary
+------------+--------
+ Anna       |  85000
+ Charles    | 110000
+(2 rows)
+
+company_queries=# SELECT first_name, salary, department
+company_queries-# FROM employees
+company_queries-# WHERE salary BETWEEN 60000 AND 80000;
+ first_name | salary | department
+------------+--------+-------------
+ Brad       |  72000 | Sales
+ Diana      |  65000 | Marketing
+(2 rows)
+
+company_queries=# SELECT first_name, last_name
+company_queries-# FROM customers
+company_queries-# WHERE first_name LIKE 'A%';
+ first_name | last_name
+------------+-----------
+ Anna       | Williams
+(1 row)
+
+company_queries=# SELECT first_name, last_name
+company_queries-# FROM employees
+company_queries-# WHERE last_name LIKE '%son';
+ first_name | last_name
+------------+-----------
+ Brad       | Johnson
+(1 row)
+
+company_queries=# SELECT first_name, email
+company_queries-# FROM employees
+company_queries-# WHERE email ILIKE '%@test.com';
+ first_name |         email
+------------+----------------------
+ Anna       | anna.w@test.com
+ Brad       | brad.j@test.com
+ Charles    | charles.s@test.com
+ Diana      | diana.b@test.com
+ Fiona      | fiona.g@test.com
+(5 rows)
+
+company_queries=# SELECT first_name
+company_queries-# FROM employees
+company_queries-# WHERE first_name ~ '^[AB]';
+ first_name
+------------
+ Anna
+ Brad
+(2 rows)
+
+company_queries=# SELECT first_name, email
+company_queries-# FROM employees
+company_queries-# WHERE email ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$';
+ first_name |         email
+------------+-----------------------
+ Anna       | anna.w@test.com
+ Brad       | brad.j@test.com
+ Charles    | charles.s@test.com
+ Diana      | diana.b@test.com
+ Ethan      | ethan.j@another.org
+ Fiona      | fiona.g@test.com
+(6 rows)
+
+company_queries=# CREATE TABLE sales (
+company_queries(#     sale_id SERIAL PRIMARY KEY,
+company_queries(#     employee_id INT,
+company_queries(#     amount INT
+company_queries(# );
+CREATE TABLE
+company_queries=# INSERT INTO sales (employee_id, amount) VALUES
+company_queries-# (2, 5000), (5, 12000), (2, 8000);
+INSERT 0 3
+
+company_queries=# SELECT first_name, department
+company_queries-# FROM employees
+company_queries-# WHERE department IN ('Sales', 'Marketing');
+ first_name | department
+------------+-------------
+ Brad       | Sales
+ Diana      | Marketing
+ Ethan      | Sales
+ Fiona      | Marketing
+(4 rows)
+
+company_queries=# SELECT first_name, last_name
+company_queries-# FROM employees e
+company_queries-# WHERE EXISTS (
+company_queries(#  SELECT 1 FROM sales s
+company_queries(#  WHERE s.employee_id = e.employee_id AND s.amount > 10000
+company_queries-# );
+ first_name | last_name
+------------+-----------
+ Ethan      | Jones
+(1 row)
+
+company_queries=# SELECT first_name, salary,
+company_queries-# CASE
+company_queries-#     WHEN salary > 100000 THEN 'Senior'
+company_queries-#     WHEN salary BETWEEN 70000 AND 100000 THEN 'Mid-Level'
+company_queries-#     ELSE 'Junior'
+company_queries-# END AS employee_level
+company_queries-# FROM employees;
+ first_name | salary | employee_level
+------------+--------+----------------
+ Anna       |  85000 | Mid-Level
+ Brad       |  72000 | Mid-Level
+ Charles    | 110000 | Senior
+ Diana      |  65000 | Junior
+ Ethan      |  94000 | Mid-Level
+ Fiona      |  58000 | Junior
+(6 rows)
+
+company_queries=# WITH department_averages AS (
+company_queries(#   SELECT
+company_queries(#     department,
+company_queries(#     AVG(salary) as avg_salary
+company_queries(#   FROM employees
+company_queries(#   GROUP BY department
+company_queries(# )
+company_queries-# SELECT
+company_queries-#     e.first_name,
+company_queries-#     e.salary,
+company_queries-#     e.department,
+company_queries-#     da.avg_salary
+company_queries-# FROM employees e
+company_queries-# JOIN department_averages da ON e.department = da.department
+company_queries-# WHERE e.salary > da.avg_salary;
+ first_name | salary | department  |      avg_salary
+------------+--------+-------------+--------------------
+ Charles    | 110000 | Engineering | 97500.000000000000
+ Diana      |  65000 | Marketing   | 61500.000000000000
+ Ethan      |  94000 | Sales       | 83000.000000000000
+(3 rows)
