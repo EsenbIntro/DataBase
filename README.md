@@ -1,9 +1,10 @@
+This repository contains laboratory work for AUCA Database course, completed Oracle database course screenshots, as well as the code for a final project. 
 
-## Final Project Topic
-### Library Management System
+Laboratory work files consists of direct input/output from the terminal copypasted into .txt files.
 
 
-## DATABASE Lab Work 1-15
+
+## Database Lab Work 1-15
 
 - Lab 1 - Basic psql Commands
 - Lab 2 - First SQL Query
@@ -21,6 +22,12 @@
 - Lab 14 - Transactions and ACID Properties
 - Lab 15 - Data Import Export and Backup
 
-This repository contains laboratory work for AUCA Database course. It consists of direct input/output from the terminal copypasted into .txt files.
 
+## Completed Oracle database courses
 
+- Oracle AI Autonomous Database Professional (2025)
+- Data Modelling and Design
+- Oracle AI Cloud Database Service Professional (2025)
+
+## Final Project Topic
+### Library Management System (pending)
