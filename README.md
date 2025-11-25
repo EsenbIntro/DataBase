@@ -30,4 +30,5 @@ Laboratory work files consists of direct input/output from the terminal copypast
 - Oracle AI Cloud Database Service Professional (2025)
 
 ## Final Project Topic
-### Library Management System (pending)
+### Library Management System
+Code for the final project was added to the repository
